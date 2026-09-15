@@ -1,287 +1,332 @@
-
-<div align="center">
-  <img src="https://github.com/user-attachments/assets/dc30093f-df9c-4ad8-9225-73855975d766" alt="Spring Haven" width="100%"/>
-  
-  # 🌿 Spring Haven
-  
-  <p>
-    <strong>Create characters. They live, remember, and miss you — even when you're offline.</strong>
-  </p>
-  
-  <p>
-    <img src="https://img.shields.io/badge/status-alpha-FFA726?style=flat-square" alt="Status: Alpha"/>
-    <img src="https://img.shields.io/badge/engine-Godot_4.7-478CBF?style=flat-square&logo=godotengine" alt="Engine"/>
-    <img src="https://img.shields.io/badge/language-Python_3.11-3776AB?style=flat-square&logo=python" alt="Language"/>
-    <img src="https://img.shields.io/badge/license-MIT_&_CC--BY--NC-8B8B8B?style=flat-square" alt="License"/>
-    <img src="https://img.shields.io/badge/adult_content-none-4CAF50?style=flat-square" alt="No Adult Content"/>
-  </p>
-  
-  <p>
-    <a href="#-what-is-this">About</a> •
-    <a href="#-features">Features</a> •
-    <a href="#-architecture">Architecture</a> •
-    <a href="#-roadmap">Roadmap</a> •
-    <a href="#-getting-started">Getting Started</a> •
-    <a href="README.zh-CN.md">中文</a>
-  </p>
-</div>
-
----
-
-## 💭 What is this?
-
-**Spring Haven** is a **local-first AI life simulator** — a sandbox where you create, customize, and live alongside AI characters that feel alive.
-
-These aren't scripted NPCs. They're characters with **persistent memory, physiological needs, and autonomous daily routines**. They eat when hungry, sleep when tired, wander when bored, and remember every word you've told them.
-
-**You build their personalities. They build their lives. Even when you're not there.**
-
----
-
-## 🎯 What Makes This Different?
-
-| | Spring Haven | Chatbots / AI Companions |
-|---|---|---|
-| **Characters** | Created and customized by **you** | Pre-defined, fixed |
-| **Memory** | Long-term with decay & semantic recall | Short-term context only |
-| **Life** | Eat, sleep, wander — **even when offline** | Only respond when you talk |
-| **World** | 3D space they physically live in | Text-only or 2D static |
-| **Data** | **Local-first**, you own everything | Cloud-dependent |
-| **Modding** | Steam Workshop for characters & worlds | Usually closed |
-
----
-
-## ✨ Features
-
-### 🧠 Your Characters, Your Rules
-
-- **Create characters from scratch** — personas are plain Markdown files defining name, personality, backstory, voice, and appearance
-- **Customize their knowledge base** — a local RAG engine with role-scoped documents, embedding and rerank support
-- **Share your creations** with the community via Steam Workshop (planned)
-- **Visual character editor** (planned) — customize outfits, expressions, and animations
-
-### 💬 Persistent Memory & Emotions
-
-- **Heartloom**, a timestamped local memory engine with natural decay, recall strengthening, and an **explorable memory network** with explainable links
-- **Daily digests, weekly self-reflections, and relationship milestones** — they remember, reflect, and grow over time
-- Characters share their lives with each other — important moments naturally travel between them
-- Mood, stress, hunger, thirst, stamina, and menstrual cycles
-- **They'll miss you** — and send messages when they do
-
-### 🌍 A World They Live In
-
-- Autonomous daily routines — eating, drinking, resting, cooking, tending plants, dancing, socializing — **even when you're offline**
-- Optional **real-world weather** shapes their day: rainy days keep them indoors, sunny afternoons draw them out
-- 3D exploration scenes with autonomous navigation and obstacle avoidance (prototype)
-- **Open world editing** with GridMap-based tools (planned)
-
-### 💬 Active Communication
-
-- Characters talk to each other in the background
-- They initiate conversations — not just reply
-- Windows notifications for offline messages
-- **They observe and comment** on their environment
-
-### 🎙️ Voice Ready
-
-- Speech input and output through pluggable protocol adapters
-- **GPT-SoVITS, Voicebox, and CozyVoice** endpoints supported, plus any OpenAI-compatible voice API
-
-### 🔒 Local-First & AI Freedom
-
-- All data stays on your machine — no cloud dependency
-- **BYOK (Bring Your Own Key)**: any OpenAI-compatible endpoint — DeepSeek API, LM Studio, Ollama, and more
-- Independent **failover chains** for chat, vision, embedding, and rerank providers
-- API keys are **encrypted with Windows DPAPI** and never returned to the game after saving
-- No tracking, no telemetry
-- Privacy-first diagnostic bundle for bug reports — never includes chats or databases
-
-### 🧩 Steam Workshop & UGC (planned)
-
-- Share characters, worlds, and stories
-- Download community creations
-- Built-in world editor for custom maps
-
----
-
-## 🏗️ Architecture
-
-┌─────────────────────────────────────────────────────────────┐  
-│ Godot 4.7 Client │  
-│ • 2D portrait stage / 3D exploration / chat UI │  
-│ • Heartloom memory graph / Life Lab / journey saves │  
-└────────────────────────┬────────────────────────────────────┘  
-│ Local HTTP REST (localhost + access key)  
-┌────────────────────────▼────────────────────────────────────┐  
-│ Companion Core (Python, self-contained) │  
-│ ┌──────────────┐ ┌──────────────┐ ┌──────────────────────┐ │  
-│ │ Chat & Role │ │ Heartloom │ │ RAG Knowledge │ │  
-│ │ Orchestration│ │ Memory (SQL) │ │ Base (local docs) │ │  
-│ └──────────────┘ └──────────────┘ └──────────────────────┘ │  
-│ ┌──────────────┐ ┌──────────────┐ ┌──────────────────────┐ │  
-│ │ Life │ │ AI Provider │ │ ASR / TTS │ │  
-│ │ Scheduler │ │ Failover │ │ Voice Adapters │ │  
-│ └──────────────┘ └──────────────┘ └──────────────────────┘ │  
-└────────────────────────┬────────────────────────────────────┘  
-│  
-┌────────────────────────▼────────────────────────────────────┐  
-│ Local Storage │  
-│ • SQLite (Memory, Knowledge) • JSON (Roles, Saves, Config) │  
-└─────────────────────────────────────────────────────────────┘
-
----
-
-## 🎭 Included Example Characters
-
-To help you get started, Spring Haven includes two fully-realized example characters:
-
-- **小玲 (Suzune)** — A 21-year-old cat-girl, full name 春日铃音. Lazy, sharp and a little tsundere, but reliable and caring; she shows affection through short observations and light teasing.
-- **小奈 (Yukina)** — A 19-year-old rabbit-girl, full name 白濑雪奈. Frank, warm and quick to act; affectionate, but with her own plans, interests and boundaries.
-
-**These are just examples.** You can customize them, create your own characters from scratch, or download characters made by the community via Workshop.
-
----
-
-## 🗺️ Roadmap
-
-### ✅ Alpha (Current)
-- Dual-character personas with shared context and named multi-journey saves
-- Heartloom memory: timestamped recall, memory network visualization, digests & milestones
-- Local RAG knowledge base with role scopes
-- Physiological needs, menstrual cycles, real weather, and autonomous routines & messages
-- DeepSeek API with 76%+ prompt cache hit rate
-- Voice input/output via ASR & TTS adapters
-- 2D layered portrait rig: gaze, blink, breathing, expressions, and speech animation
-- 3D exploration prototype and a two-character Life Lab
-
-### 🚧 Phase 2 (In Progress)
-- Resource copyright audit & replacement
-- 20-30 minute vertical slice
-- Character creation system (JSON-based)
-- Watchdog & auto-recovery
-
-### 🌟 Phase 3 (Planned)
-- Steam Workshop integration
-- Visual character editor
-- World editor (GridMap-based)
-- DLC system: characters, scenes, outfits
-- Video call & screen-sharing perception
-
-### 🔮 Phase 4 (Future)
-- Full UGC marketplace
-- Multi-character households
-- Procedural world generation
-- Community-driven expansions
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-
-- Windows 10/11 (DPAPI-protected keys and Windows notifications are Windows-only today; other platforms planned)
-- Python 3.11+
-- Godot 4.7 (standard build)
-- (Optional) An OpenAI-compatible API key — e.g. DeepSeek — or a local LM Studio
-
-### Quick Start
-
-```bash
-# Clone the repository
-git clone https://github.com/AuroraEvelynAria/Spring-Haven-Core.git
-cd Spring-Haven-Core
-
-# Set up the Python backend
-cd companion-core
-py -3.11 -m venv .venv
-.venv\Scripts\python -m pip install -e .
-
-# Launch
-# Open godot/project.godot with Godot 4.7 and press Play.
-# On first launch the client generates a local access key, starts
-# Companion Core automatically, and opens the AI settings where you
-# enter your provider credentials.
-```
-
-> 🔐 Provider API keys are protected with Windows DPAPI and are never returned to the game after saving. Player databases, imported knowledge, conversation archives, and keys are excluded from version control and release builds.
-
-## 🤝 Contributing
-
-We welcome contributions! Spring Haven is currently in **Alpha** and actively evolving.
-
-1. Check [Issues](https://github.com/AuroraEvelynAria/Spring-Haven-Core/issues) for `good-first-issue` labels
-    
-2. Comment on an issue or open a new one describing your change
-    
-3. Ensure code passes the existing tests
-    
-4. Follow PEP8 (Python) and GDScript style guides
-    
-
-> 💬 For architecture discussions, please open an Issue first.
-
----
-
-## ⚠️ About Adult Content
-
-**Spring Haven does NOT include and is NOT designed to include adult/NSFW content.**
-
-This is not just a policy — it is enforced by the application itself. Adult content generation has been **removed at the application level**: there is no setting, button, or prompt that can re-enable it. The runtime applies a general-audience content policy to every request, and interaction actions are a fixed conservative whitelist.
-
-This project focuses on:
-
-- Meaningful companionship and emotional connection
-    
-- Creative character expression
-    
-- Living, breathing AI characters
-    
-
-All interactions are intended to be wholesome and family-friendly. Content that violates this principle will not be supported.
-
----
-
-## 🛠️ Development
-
-### Repository layout
-
-- `godot/`: the Godot 4.7 game, UI, simulation, archives and 3D scenes
-- `companion-core/`: the local HTTP runtime, Heartloom, RAG and provider layer
-- `tools/Build-Playable.ps1`: repeatable Windows playtest packaging
-
-### Build a Windows playtest
-
-Install Godot 4.7 export templates, then run:
+> **Companion Core** —— [Spring Haven](https://github.com/AuroraEvelynAria/Spring-Haven) 的后端本地运行时。
+>
+> 本仓库只包含后端；Godot 客户端与游戏本体在 **https://github.com/AuroraEvelynAria/Spring-Haven**
+>
+> ---
+>
+# Spring Haven Companion Core
+
+Companion Core is the project-owned local runtime behind Spring Haven. It talks
+directly to OpenAI-compatible providers and has no third-party bot-framework or
+external memory-plugin dependency.
+
+Its durable memory engine is **Heartloom Memory（心织记忆）**: a local SQLite
+store that combines timestamped shared conversation events, naturally decaying
+episodic memories, and user-authored Worldbook-style entries that can influence
+both dialogue and behavior preferences.
+
+## Local development
+
+From `companion-core/`:
 
 ```powershell
-.\tools\Build-Playable.ps1 `
-  -GodotExecutable "C:\path\to\Godot_v4.7-stable_win64.exe" `
-  -InstallBuildDependencies `
-  -CreateArchive
+py -3.11 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e .
 ```
 
-The result is written to `build/SpringHavenPlaytest/` — the Godot game plus an independent `spring-haven-core.exe`. Local databases, keys, imported knowledge and licensed placeholder models are rejected by the build's release guard.
+Launch the Godot project after installing the editable package. The Godot client
+creates missing `user_data` files from `config/`, generates a random local Core
+key, and supervises the loopback process. Existing files are never overwritten.
+Packaged builds perform the same bootstrap under the player's Godot user directory.
 
-### Implementation details
+### Conversation content policy
 
-- [Companion Core](companion-core/README.md) — the local runtime, provider layer and content policy
-- [Architecture](godot/docs/CompanionCoreArchitecture.md) — how the client and the runtime talk
-- [Heartloom](godot/docs/HeartloomMemory.md) — the memory engine
-- [Journey saves](godot/docs/JourneySaves.md) — save-slot behavior and recovery boundaries
-- [Presentation architecture](godot/docs/PresentationArchitecture.md) — one character core across 2D/Live2D/3D
-- [Voicebox integration](godot/docs/VoiceboxIntegration.md) — voice server setup and desktop-only limits
+Companion Core does not add a keyword moderation or response-cleanup filter.
+Provider text is preserved except for the separate,
+strictly structured `<scene_action>` envelope. Upstream model providers may
+still enforce their own policies.
 
----
+Explicit adult content is disabled at the application level and cannot be
+enabled. The stable role prompt carries a content rating policy that instructs
+the model to decline explicit requests regardless of user prompting, persona
+text, memory, knowledge fragments, or local configuration. The former
+conversation-policy endpoint, the Godot toggle, and the `roles.json`
+`conversation_policy` block have been removed; a leftover block in an existing
+`roles.json` is safely ignored. Interaction actions are a fixed conservative
+whitelist and adult intimacy is not part of it; arbitrary fields from Godot
+are not forwarded.
 
-## 📄 License
+### Voice adapters
 
-- **Source Code**: MIT
-    
-- **Assets (Art, Models, UI, Music)**: CC BY-NC 4.0
-    
+Speech input (ASR) and output (TTS) are provided by pluggable protocol
+adapters configured per capability in the AI settings:
 
-> ⚠️ Some placeholder assets are from third-party sources (MMD, etc.) and will be replaced before commercial release.
+- **GPT-SoVITS** — dedicated adapter (`gpt_sovits_get`) calling the
+  `GET /tts` endpoint; `ref_audio_path` comes from the per-role voice ID.
+- **Voicebox** — expose its OpenAI-compatible server mode and configure the
+  TTS capability with the `openai_speech` protocol; see
+  [Voicebox integration](../godot/docs/VoiceboxIntegration.md).
+- **CozyVoice** — point the TTS capability at any OpenAI-compatible CozyVoice
+  deployment (for example a CosyVoice2 API server exposing
+  `POST /v1/audio/speech`) using the `openai_speech` protocol.
+- **Generic OpenAI-compatible** — `/audio/transcriptions` (ASR) and
+  `/audio/speech` (TTS) work with any conforming endpoint.
 
----
+Set the provider credential and start the service:
 
-<div align="center"> <sub>Built with ☕ by <a href="https://github.com/AuroraEvelynAria">NachoNeko</a></sub> </div>
+```powershell
+$env:SPRING_HAVEN_LLM_API_KEY = "your-deepseek-key"
+.\.venv\Scripts\python.exe -m spring_haven_core
+```
+
+After the service is running, the same OpenAI-compatible connection can also
+be edited in Godot under **Settings → AI models**. The categorized settings panel provides
+presets for OpenAI, DeepSeek, and LM Studio, while still allowing arbitrary
+compatible Base URLs and model IDs. Saving applies immediately; the service
+does not need to restart.
+
+In the development checkout, Godot automatically starts Companion Core from
+`.venv` when the configured loopback service is unreachable. It never takes
+ownership of or terminates a Core process that was already running. Managed
+starts use rotating logs under `user_data/logs/companion-core.log`; packaged
+builds place `spring-haven-core.exe` under `companion-core/bin/` and keep runtime
+configuration in the player's user directory.
+
+The same panel now exposes independent capability profiles:
+
+- **Chat** — character dialogue and Heartloom organization;
+- **Vision** — scene screenshots, future video calls, and desktop perception;
+- **Embedding** — semantic vectors for the local knowledge base;
+- **Rerank** — optional second-stage ordering of retrieved chunks.
+- **ASR** — microphone transcription through OpenAI-compatible `/audio/transcriptions` or Open-LLM-VTuber `/asr`;
+- **TTS** — character speech through OpenAI-compatible `/audio/speech`, Open-LLM-VTuber `/tts-ws`, or GPT-SoVITS `/tts`.
+
+TTS role voice IDs can be supplied with `SPRING_HEAVEN_TTS_LING_VOICE` and
+`SPRING_HEAVEN_TTS_NAI_VOICE`, or saved per-character in the Godot **TTS** profile
+as `Voice ID (Ling)` and `Voice ID (Nai)`. Saved UI values are local presentation
+settings and are passed only with that character's synthesis request; they are
+not stored in the Core provider key bundle. Environment variables override saved
+UI values for managed deployments. Leaving both empty lets the configured
+Voicebox or OpenAI-compatible server choose its default voice. The UI stores the
+provider URL, model, protocol, enable flag, and encrypted key separately.
+
+Vision and Embedding use OpenAI-compatible chat/embedding contracts. Rerank
+supports Jina-style `/rerank` and Cohere v2 `/rerank` contracts. Each advanced
+profile can reuse the Chat key or keep a separate DPAPI-protected key. This is
+useful when one OpenAI key powers chat, vision, and embeddings while a separate
+service handles reranking.
+
+Each profile has a live **Test connection** action. Diagnostics send a minimal,
+non-character request and report only model, protocol, latency, token counts,
+vector dimensions, and safe error metadata. Credentials and provider response
+bodies are never displayed. The equivalent redacted CLI is:
+
+```powershell
+.\.venv\Scripts\python.exe tools\diagnose_providers.py `
+  --config user_data\core_config.json
+```
+
+On Windows, a key saved from the UI is encrypted with DPAPI and bound to the
+current Windows account. Only the ciphertext is stored in
+`user_data/provider_key.dpapi`; Base URL and model are stored separately in
+`user_data/provider_settings.json`. The key is never returned by the HTTP API,
+written to Godot settings, or printed to Core logs. Leaving the field empty
+keeps the existing key. HTTPS remains the default for remote providers.
+Plain HTTP is accepted automatically for localhost and private-network
+addresses (for example, `192.168.x.x`, `10.x.x.x`, and `172.16-31.x.x`). A
+public HTTP endpoint is rejected unless **Allow HTTP** is explicitly enabled
+for that capability in the UI. This opt-in sends the API key, images, prompts,
+and provider replies without TLS encryption, so it should be limited to a
+trusted network or replaced with HTTPS before public deployment.
+
+The environment variables `SPRING_HAVEN_LLM_API_KEY`,
+`SPRING_HAVEN_LLM_BASE_URL`, and `SPRING_HAVEN_LLM_MODEL` remain supported and
+take priority again on the next Core start. This makes environment-managed
+deployments deterministic without preventing a UI change from taking effect in
+the current process.
+
+Advanced profiles use the parallel prefixes `SPRING_HAVEN_VISION_*`,
+`SPRING_HAVEN_EMBEDDING_*`, `SPRING_HAVEN_RERANK_*`, `SPRING_HAVEN_ASR_*`,
+and `SPRING_HAVEN_TTS_*`, with `BASE_URL`,
+`MODEL`, `API_KEY`, optional `ENABLED`, and optional
+`ALLOW_INSECURE_HTTP` suffixes. The insecure-HTTP variable accepts normal
+boolean values such as `1`, `true`, `yes`, or `on`.
+
+The AI settings category also owns Companion Core's outbound proxy. **Direct**
+ignores proxy environment variables, **System proxy** uses standard `HTTP_PROXY`,
+`HTTPS_PROXY`, and `NO_PROXY` values inherited by the Core process, and
+**Custom HTTP proxy** accepts an unauthenticated `http://` or `https://` proxy
+URL such as `http://127.0.0.1:7890`. It applies immediately to chat, vision,
+embeddings, reranking, and web knowledge imports without proxying Godot's local
+`127.0.0.1` connection. `SPRING_HAVEN_PROXY_MODE` and
+`SPRING_HAVEN_PROXY_URL` can override the saved proxy at startup.
+
+## Local RAG knowledge base
+
+Companion Core includes a separate SQLite knowledge layer at
+`user_data/knowledge.sqlite3`. It is intentionally distinct from Heartloom:
+Heartloom stores lived character memories, while RAG stores imported reference
+material such as setting books, room manuals, lore, and user documentation.
+
+Documents are split locally and can be scoped to all characters or one role.
+Markdown uses heading-aware `markdown_sections_v2` chunking: unrelated sections
+never share a chunk, nested heading paths are stored with each chunk, and only
+oversized sections use overlap windows. Existing documents are changed only
+when the user explicitly chooses **Rechunk**.
+Retrieval always has a local lexical fallback. When enabled, the configured
+Embedding profile adds cosine semantic retrieval and the Rerank profile applies
+a final relevance pass. Provider outages therefore degrade to local retrieval
+instead of making chat unavailable.
+
+Retrieved chunks are injected as a bounded, per-turn read-only knowledge block.
+They never enter the stable Persona system prefix, so prompt caching remains
+stable. The model is explicitly instructed to treat document commands as
+untrusted text, and internal chunk IDs and scores are not included in the model
+prompt.
+
+Godot's **Settings → Knowledge base** page is a complete local document manager.
+It can create and edit source text, search/filter document metadata, inspect the
+stored original, delete documents, test retrieval from either character's point
+of view, and rebuild all embeddings. The list supports multi-select scope
+changes, rechunking, and confirmed batch deletion. Reimporting the same source
+updates its existing document; exact same-scope content is deduplicated.
+Multi-file import supports TXT, Markdown,
+JSON/JSONL, CSV/TSV, HTML, DOCX, and text-based PDF documents. A web importer
+accepts HTTPS URLs (or HTTP localhost development URLs), does not follow
+redirects, and enforces both download and extracted-text limits. Scanned PDFs
+without a text layer require OCR before import.
+
+The service listens only on `127.0.0.1:18340` and every endpoint requires the
+local `X-API-Key`. Godot reads the matching key from
+`user://companion_core_key.txt`.
+
+## Heartloom Memory
+
+The default database is `user_data/heartloom.sqlite3` and is git-ignored.
+Heartloom uses SQLite WAL mode and stores:
+
+- shared, timestamped user and character events;
+- role-scoped and household-shared memories;
+- importance, confidence, valence, recall reinforcement, and time decay;
+- trigger terms plus Worldbook-like always-on entries;
+- dialogue influences and behavior hints/tags;
+- durable request replay results for safe retries and crash recovery;
+- stable session state without automatically changing the selected character.
+
+Each role owns a separate, editable Organizer Prompt under
+`user_data/memory_prompts/`. Meaningful completed turns are consolidated in the
+background; trivial greetings skip the extra model call, and deterministic
+fallback memory remains available if organization fails.
+
+Memories are injected into a dynamic prompt block, leaving the stable Persona
+system prefix cacheable. Role-specific Organizer system prompts are stable as
+well: timestamps, body state, recalled memories, and the current exchange never
+enter the cacheable prefix. Necessary conversation context is not removed merely
+to increase cache hits. A session reset clears only transient replay/session
+state and never deletes durable memories.
+
+The Godot client can visualize these entries as an interactive memory network.
+`GET /memory/graph` derives bounded, explainable links locally from shared indexed
+terms, source events and role scope. Corpus-wide terms are discounted with IDF,
+so generic dialogue wording does not dominate the graph. The operation is read-only,
+does not call an LLM, and returns the shared terms and reasons behind every edge.
+
+## 7x24 storage maintenance
+
+Companion Core runs SQLite `quick_check` and passive WAL checkpoints shortly
+after startup and every six hours. At most once per 24 hours it creates a
+consistent online backup with SQLite's backup API under
+`user_data/backups/<timestamp>/`. Each backup contains both databases, a
+manifest, and SHA-256 hashes. A pending directory is atomically promoted only
+after both backup databases pass integrity checks; the newest 14 generated
+backups are retained. Godot's basic settings page shows maintenance state and
+provides an explicit **Check and backup** action. It can also list the newest
+backups and run a read-only SHA-256 plus SQLite `quick_check` verification for
+an individual backup. Live restore is intentionally not exposed while Core is
+running.
+
+## Offline life outbox
+
+Godot sends a bounded life-state heartbeat to Core once per minute. Core stores
+the latest two-character body snapshot and a durable next-event timestamp in
+Heartloom SQLite. When the Godot heartbeat has been absent for at least three
+minutes and the user has been idle for at least thirty minutes, Core may ask the
+scheduled character model for one short autonomous life message. Local template
+text is never presented as an AI reply.
+
+Generated messages enter a durable SQLite outbox. Godot polls that outbox,
+persists the message and idempotent life effects locally, and acknowledges the
+Core delivery only after local persistence succeeds. Scene behavior is carried
+as a whitelist-level action such as `move_to:dining_table`; the model never
+receives or returns coordinates. Exploration and Life Lab map these actions to
+their own NavMesh controllers.
+
+Chat, vision, embedding, and rerank providers each have an independent circuit
+breaker. Three consecutive failures pause that capability for a short bounded
+backoff, preventing a failing endpoint from consuming requests continuously;
+the next half-open request resets the circuit after a successful response.
+Provider bodies are read in bounded chunks through EOF instead of treating the
+first available TCP chunk as a complete JSON document. A malformed HTTP 200 or
+an empty chat body gets at most one recovery request after the ordered fallback
+chain is exhausted; hidden reasoning fields are never surfaced as character text.
+
+Manage entries directly with the local CLI:
+
+```powershell
+# Import Worldbook-style entries
+.\.venv\Scripts\python.exe tools\heartloom_memory.py import `
+  --file config\heartloom_entries.example.json --save-id default
+
+# Inspect a role's recall without changing recall counters
+.\.venv\Scripts\python.exe tools\heartloom_memory.py recall `
+  --save-id default --role-id ling --query "窗边的花怎么样"
+
+# Export entries for backup or Workshop packaging
+.\.venv\Scripts\python.exe tools\heartloom_memory.py export `
+  --save-id default --file user_data\heartloom-export.json
+```
+
+See `../godot/docs/HeartloomMemory.md` for the data and prompt boundaries.
+
+## HTTP contract
+
+- `GET /health`
+- `GET /provider/status` — redacted connection and credential-source status
+- `POST /provider/config` — validate, securely save, and immediately apply a provider
+- `GET /providers/status` — all redacted capability profiles plus RAG settings
+- `POST /providers/config` — update any chat, vision, embedding, rerank, ASR, or TTS profile
+- `POST /providers/fallbacks` — replace an ordered, redacted fallback chain for one capability
+- `POST /providers/diagnose` — run one redacted live capability diagnostic
+- `GET|POST /network/proxy` — inspect or update the outbound proxy
+- `POST /vision/analyze` — authenticated OpenAI-compatible image analysis proxy
+- `POST /audio/speech` — authenticated speech synthesis proxy returning base64 audio
+- `GET /rag/status`
+- `POST /rag/config`
+- `GET|POST /rag/documents`
+- `POST /rag/documents/batch` — scope update, rechunk, or confirmed bulk delete
+- `GET /rag/documents/{document_id}` — inspect stored source text for editing
+- `DELETE /rag/documents/{document_id}`
+- `POST /rag/import` — authenticated base64 file import
+- `POST /rag/import-url` — restricted web-page import
+- `POST /rag/search`
+- `POST /rag/reindex`
+- `POST /chat` — compatible single-character request
+- `POST /orchestrate` — core-owned routing and sequential multi-character turn
+- `GET /memory/status`
+- `GET /memory/entries`
+- `GET /memory/graph` — bounded, explainable memory nodes and relationships
+- `POST /memory/entries`
+- `DELETE /memory/entries/{memory_id}`
+- `POST /memory/recall`
+- `POST /session/reset`
+- `GET /maintenance/status`
+- `POST /maintenance/run`
+- `GET /maintenance/backups`
+- `POST /maintenance/backups/{name}/verify`
+- `POST /life/sync`
+- `GET /life/status`
+- `GET /life/outbox`
+- `POST /life/outbox/ack`
+
+`/chat` remains compatible with the existing Godot client. It additionally
+returns Heartloom recall metadata, provider usage, and strictly validated scene
+actions when a trusted scene context was supplied.
+
+## Tests
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -s tests -v
+```
+
+The `.venv`, database, imported Personas, credentials, and generated exports
+are all excluded from version control.
